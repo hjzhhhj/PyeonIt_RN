@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import React, { useState } from 'react';
 import styled from 'styled-components/native';
+import { NativeStackNavigationProp } from 'react-native-screens/lib/typescript/native-stack/types';
 
 const BackButton = styled.TouchableOpacity`
   position: absolute;
@@ -33,20 +33,20 @@ const ContentText = styled.Text`
   margin-bottom: 24px;
 `;
 
-const PasswordInput = styled.TextInput`
+const EmailInput = styled.TextInput`
   width: 90%;
   height: 56px;
   background-color: white;
   border: 1px solid #ccc;
   border-radius: 8px;
-  padding: 16px 20px;
+  padding: 16px 20px 16px 20px;
   font-size: 16px;
-  margin-bottom: 12px;
 `;
 
 const ErrorRow = styled.View`
   flex-direction: row;
   align-items: center;
+  margin-top: 8px;
   width: 90%;
 `;
 
@@ -82,50 +82,34 @@ const ButtonText = styled.Text`
   text-align: center;
 `;
 
-const Password = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
-
-  const [password, setPassword] = useState('');
-  const [passwordConfirm, setPasswordConfirm] = useState('');
+const NickName = () => {
+  const [email, setEmail] = useState('');
   const [error, setError] = useState('');
 
-  // 비밀번호 유효성 검사
-  const validatePassword = (pwd: string) => {
-    // 8~16자 영문, 숫자, 특수문자 포함 정규식 예시
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+~`|}{[\]:;?><,./\-_=]).{8,16}$/;
-    if (pwd.trim() === '') {
-      setError('비밀번호를 입력해주세요.');
+  const validateNickname = (text: string) => {
+    if (text.trim() === '') {
+      setError('닉네임을 입력해주세요.');
       return false;
     }
-    if (!passwordRegex.test(pwd)) {
-      setError('비밀번호 기준에 맞지 않아요.');
+    if (text.length > 8) {
+      setError('닉네임은 8자 이내로 입력해주세요.');
       return false;
     }
     setError('');
     return true;
   };
 
-  // 비밀번호 확인 일치 검사
-  const validateConfirmPassword = (pwdConfirm: string) => {
-    if (pwdConfirm.trim() === '') {
-      setError('비밀번호 확인을 입력해주세요.');
-      return false;
-    }
-    if (pwdConfirm !== password) {
-      setError('비밀번호가 일치하지 않습니다.');
-      return false;
-    }
-    setError('');
-    return true;
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+
+  const handleChange = (text: string) => {
+    setEmail(text);
+    validateNickname(text);
   };
 
   const handleStart = () => {
-    // 순서대로 검사
-    if (!validatePassword(password)) return;
-    if (!validateConfirmPassword(passwordConfirm)) return;
-
-    // 문제 없으면 다음 화면으로
-    navigation.navigate('NickName');
+    if (validateNickname(email)) {
+      navigation.navigate('Password');
+    }
   };
 
   const handleGoBack = () => {
@@ -140,27 +124,15 @@ const Password = () => {
       <Content>
         <ContentText>
           편잇에서 사용하실{"\n"}
-          비밀번호를 입력해주세요!
+          닉네임을 입력해주세요!
         </ContentText>
-        <PasswordInput
-          placeholder="영문, 숫자, 특수문자 포함 8~16자"
-          secureTextEntry
+        <EmailInput
+          placeholder="닉네임을 입력해주세요!"
+          keyboardType="default"
           autoCapitalize="none"
-          value={password}
-          onChangeText={(text) => {
-            setPassword(text);
-            if (error) validatePassword(text);
-          }}
-        />
-        <PasswordInput
-          placeholder="비밀번호 확인"
-          secureTextEntry
-          autoCapitalize="none"
-          value={passwordConfirm}
-          onChangeText={(text) => {
-            setPasswordConfirm(text);
-            if (error) validateConfirmPassword(text);
-          }}
+          autoCorrect={false}
+          value={email}
+          onChangeText={handleChange}
         />
         {error !== '' && (
           <ErrorRow>
@@ -179,4 +151,4 @@ const Password = () => {
   );
 };
 
-export default Password;
+export default NickName;
