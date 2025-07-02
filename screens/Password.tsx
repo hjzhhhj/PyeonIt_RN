@@ -84,7 +84,7 @@ const ButtonText = styled.Text`
   text-align: center;
 `;
 
-const Signup = () => {
+const Password = () => {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
 
@@ -157,4 +157,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Password;
