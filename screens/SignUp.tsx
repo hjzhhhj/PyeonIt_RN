@@ -31,17 +31,17 @@ const ContentText = styled.Text`
   font-size: 24px;
   font-weight: 600;
   text-align: left;
-  width: 85%;
+  width: 90%;
   margin-bottom: 24px;
 `;
 
 const EmailInput = styled.TextInput`
   width: 90%;
-  height: 48px;
+  height: 56px;
   background-color: white;
   border: 1px solid #ccc;
   border-radius: 8px;
-  padding-horizontal: 12px;
+  padding: 16px 20px 16px 20px;
   font-size: 16px;
 `;
 
@@ -53,13 +53,13 @@ const ErrorRow = styled.View`
 `;
 
 const ErrorIcon = styled.Image`
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   margin-right: 6px;
 `;
 
 const ErrorText = styled.Text`
-  color: red;
+  color: #FF3A3A;
   font-size: 14px;
 `;
 
@@ -97,7 +97,7 @@ const Signup = () => {
     // 간단 이메일 정규식
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(text)) {
-      setError('유효한 이메일 형식이 아닙니다.');
+      setError('유효한 이메일 형식이 아니에요.');
       return false;
     }
     setError('');
@@ -113,8 +113,7 @@ const Signup = () => {
 
   const handleStart = () => {
     if (validateEmail(email)) {
-      // 이메일 유효하면 다음으로 이동
-      // navigation.navigate('다음페이지');
+      navigation.navigate('Password');
     }
   };
 

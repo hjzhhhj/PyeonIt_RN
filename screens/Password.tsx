@@ -1,7 +1,6 @@
-import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { TextInput, View, Image } from 'react-native';
-import { NativeStackNavigationProp } from 'react-native-screens/lib/typescript/native-stack/types';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import styled from 'styled-components/native';
 
 const BackButton = styled.TouchableOpacity`
@@ -11,8 +10,7 @@ const BackButton = styled.TouchableOpacity`
   z-index: 10;
 `;
 
-const BackIcon = styled.Image`
-`;
+const BackIcon = styled.Image``;
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -31,35 +29,35 @@ const ContentText = styled.Text`
   font-size: 24px;
   font-weight: 600;
   text-align: left;
-  width: 85%;
+  width: 90%;
   margin-bottom: 24px;
 `;
 
-const EmailInput = styled.TextInput`
+const PasswordInput = styled.TextInput`
   width: 90%;
-  height: 48px;
+  height: 56px;
   background-color: white;
   border: 1px solid #ccc;
   border-radius: 8px;
-  padding-horizontal: 12px;
+  padding: 16px 20px;
   font-size: 16px;
+  margin-bottom: 12px;
 `;
 
 const ErrorRow = styled.View`
   flex-direction: row;
   align-items: center;
-  margin-top: 8px;
   width: 90%;
 `;
 
 const ErrorIcon = styled.Image`
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   margin-right: 6px;
 `;
 
 const ErrorText = styled.Text`
-  color: red;
+  color: #FF3A3A;
   font-size: 14px;
 `;
 
@@ -85,37 +83,49 @@ const ButtonText = styled.Text`
 `;
 
 const Password = () => {
-  const [email, setEmail] = useState('');
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+
+  const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
   const [error, setError] = useState('');
 
-  // 이메일 유효성 검사 간단 정규식
-  const validateEmail = (text: string) => {
-    if (text.trim() === '') {
-      setError('이메일을 입력해주세요.');
+  // 비밀번호 유효성 검사
+  const validatePassword = (pwd: string) => {
+    // 8~16자 영문, 숫자, 특수문자 포함 정규식 예시
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+~`|}{[\]:;?><,./\-_=]).{8,16}$/;
+    if (pwd.trim() === '') {
+      setError('비밀번호를 입력해주세요.');
       return false;
     }
-    // 간단 이메일 정규식
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(text)) {
-      setError('유효한 이메일 형식이 아닙니다.');
+    if (!passwordRegex.test(pwd)) {
+      setError('비밀번호 기준에 맞지 않아요.');
       return false;
     }
     setError('');
     return true;
   };
 
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
-
-  const handleChange = (text: string) => {
-    setEmail(text);
-    validateEmail(text);
+  // 비밀번호 확인 일치 검사
+  const validateConfirmPassword = (pwdConfirm: string) => {
+    if (pwdConfirm.trim() === '') {
+      setError('비밀번호 확인을 입력해주세요.');
+      return false;
+    }
+    if (pwdConfirm !== password) {
+      setError('비밀번호가 일치하지 않습니다.');
+      return false;
+    }
+    setError('');
+    return true;
   };
 
   const handleStart = () => {
-    if (validateEmail(email)) {
-      // 이메일 유효하면 다음으로 이동
-      // navigation.navigate('다음페이지');
-    }
+    // 순서대로 검사
+    if (!validatePassword(password)) return;
+    if (!validateConfirmPassword(passwordConfirm)) return;
+
+    // 문제 없으면 다음 화면으로
+    navigation.navigate('다음페이지');
   };
 
   const handleGoBack = () => {
@@ -130,15 +140,27 @@ const Password = () => {
       <Content>
         <ContentText>
           편잇에서 사용하실{"\n"}
-          이메일을 입력해주세요!
+          비밀번호를 입력해주세요!
         </ContentText>
-        <EmailInput
-          placeholder="이메일 입력"
-          keyboardType="email-address"
+        <PasswordInput
+          placeholder="영문, 숫자, 특수문자 포함 8~16자"
+          secureTextEntry
           autoCapitalize="none"
-          autoCorrect={false}
-          value={email}
-          onChangeText={handleChange}
+          value={password}
+          onChangeText={(text) => {
+            setPassword(text);
+            if (error) validatePassword(text);
+          }}
+        />
+        <PasswordInput
+          placeholder="비밀번호 확인"
+          secureTextEntry
+          autoCapitalize="none"
+          value={passwordConfirm}
+          onChangeText={(text) => {
+            setPasswordConfirm(text);
+            if (error) validateConfirmPassword(text);
+          }}
         />
         {error !== '' && (
           <ErrorRow>
