@@ -108,7 +108,7 @@ const NickName = () => {
 
   const handleStart = () => {
     if (validateNickname(email)) {
-      navigation.navigate('Password');
+      navigation.navigate('Ready');
     }
   };
 

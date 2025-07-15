@@ -51,3 +51,8 @@
 	<false/>
 </dict>
 </plist>
+
+<key>UIAppFonts</key>
+<array>
+  <string>FontAwesome.ttf</string>
+</array>
